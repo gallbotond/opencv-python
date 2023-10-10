@@ -4,6 +4,7 @@ import rescale as rs
 
 # cap = cv2.VideoCapture("http://192.168.0.127:4747/video?640x480")
 cap = cv2.VideoCapture("./vid/VID_20230929_200847.mp4")
+# cap = cv2.VideoCapture(0)
 
 mpHands = mp.solutions.hands
 hands = mpHands.Hands()
@@ -16,5 +17,7 @@ while True:
 
   print("hands detected" if results.multi_hand_landmarks != None else "no hands")
   
-  cv2.imshow("Image", rs.rescaleFrame(img, .2))
-  cv2.waitKey(1)
+  cv2.imshow("Image", rs.rescaleFrame(img, .8))
+  
+  if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
