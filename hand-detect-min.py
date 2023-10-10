@@ -3,7 +3,7 @@ import mediapipe as mp
 import rescale as rs
 
 # cap = cv2.VideoCapture("http://192.168.0.127:4747/video?640x480")
-cap = cv2.VideoCapture("./vid/VID_20230929_200847.mp4")
+cap = cv2.VideoCapture("./vid/VID_20231010_180634.mp4")
 
 # function to get the fps of the video
 def getFPS(cap):
@@ -19,13 +19,15 @@ def convertTo10FPS(video):
     frames = []
     count = 0
     while True:
-        success, frame = video.read()
-        if not success:
-            break
-        if count % frame_interval == 0:
-            frames.append(frame)
-        count += 1
-    print("processed frame", count)
+      success, frame = video.read()
+      if not success:
+        break
+      if count % frame_interval == 0:
+        frames.append(frame)
+        cv2.imshow('10fps', rs.rescaleFrame(frame, .2))
+        cv2.waitKey(1)
+      count += 1
+      print("processed frame", count)
     
     return frames
 
@@ -36,19 +38,18 @@ def removeFramesWithHands(cap10fps):
   for frame in cap10fps:
     imgRGB = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     results = hands.process(imgRGB)
-
     if results.multi_hand_landmarks == None:
       newCap10fps.append(frame)
-      # print ("No hands")
-    # else:
-      #  print ("Hands")
+      print ("No hands")
+    else:
+       print ("Hands")
     
     # cv2.imshow("Image", rs.rescaleFrame(frame, .2))
     
-return newCap10fps
+  return newCap10fps
 
 print("FPS: ", getFPS(cap))
-cv2.waitKey(1)
+# cv2.waitKey(1)
 
 cap10fps = convertTo10FPS(cap)
 
@@ -69,10 +70,11 @@ out = cv2.VideoWriter('output.mp4', fourcc, fps, (width, height))
 # save cap10fpsNoHands as a video file
 for frame in cap10fpsNoHands: 
   cv2.imshow("handless", rs.rescaleFrame(frame, .2))
-  out.write(frame)
    
   if cv2.waitKey(1) & 0xff == ord('q'):
     break
+
+  out.write(frame)
 
 
 out.release()
