@@ -45,6 +45,7 @@ def removeFramesWithHands(cap10fps):
        print ("Hands")
     
     # cv2.imshow("Image", rs.rescaleFrame(frame, .2))
+    
   return newCap10fps
 
 print("FPS: ", getFPS(cap))
