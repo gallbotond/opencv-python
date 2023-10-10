@@ -40,12 +40,12 @@ def removeFramesWithHands(cap10fps):
     if results.multi_hand_landmarks == None:
       newCap10fps.append(frame)
       # print ("No hands")
-    else:
+    # else:
       #  print ("Hands")
     
     # cv2.imshow("Image", rs.rescaleFrame(frame, .2))
     
-  return newCap10fps
+return newCap10fps
 
 print("FPS: ", getFPS(cap))
 cv2.waitKey(1)
