@@ -38,6 +38,7 @@ while True:
             img1 = frames[j-1]
             img2 = frames[j-2]
             diff = cv2.absdiff(img1, img2)
+            cv2.imshow('diff', diff)
             mean_diff = cv2.mean(diff)[0]
 
             # determine if there are hands on the frame
