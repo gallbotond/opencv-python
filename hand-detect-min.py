@@ -79,3 +79,7 @@ for frame in cap10fpsNoHands:
 
 out.release()
 cv2.destroyAllWindows()
+
+# stabil kepek kivalasztasa
+# framerate csokkentese 3fps
+# 
