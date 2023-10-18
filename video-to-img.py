@@ -4,7 +4,7 @@ import rescale as rs
 import time
 import mediapipe as mp
 
-cap = cv2.VideoCapture("./vid/vid.mp4")
+cap = cv2.VideoCapture("./vid/IMG_8020.mp4")
 
 
 # get the fps of the video
@@ -34,10 +34,16 @@ while True:
         j += 1
         cv2.imshow("frame", rs.rescaleFrame(frame, 0.2))
 
-        if j > 2:
+        if j > 3:
             img1 = frames[j-1]
             img2 = frames[j-2]
-            diff = cv2.absdiff(img1, img2)
+            img3 = frames[j-3]
+
+            diff1 = cv2.absdiff(img1, img2)
+            diff2 = cv2.absdiff(img2, img3)
+
+            
+
             mean_diff = cv2.mean(diff)[0]
 
             # determine if there are hands on the frame
@@ -45,7 +51,7 @@ while True:
 
             if mean_diff < difference_threshold and prev_compare == "different" and not handsDetected:
                 # save the current frame to an image file
-                cv2.imwrite(f"./curated/frame_{j}_{'%.2f' % mean_diff}.jpg", frame)
+                cv2.imwrite(f"./curated2/frame_{j}_{'%.2f' % mean_diff}.jpg", frame)
 
             prev_compare = "same" if mean_diff < difference_threshold else "different"
 
