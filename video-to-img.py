@@ -55,8 +55,28 @@ while True:
         if j > 3:
             img1 = frames[j-1]
             img2 = frames[j-2]
-            diff = cv2.absdiff(img1, img2)
-            mean_diff = cv2.mean(diff)[0]
+            img3 = frames[j-3]
+
+            diff1 = cv2.absdiff(img1, img2)
+            diff2 = cv2.absdiff(img2, img3)
+
+            # diff = cv2.bitwise_and(diff1, diff2)
+
+            mean_diff1 = cv2.mean(diff1)[0]
+            mean_diff2 = cv2.mean(diff2)[0]
+            
+            print(mean_diff1, mean_diff2, prev_compare)
+
+            # plot the plot_diff and show it
+            x.append(j)
+            plot_diff.append(mean_diff1)
+            line.set_data(x, plot_diff)
+
+            ax.relim()
+            ax.autoscale_view()
+
+            plt.draw()
+            plt.pause(0.1)
 
             # determine if there are hands on the frame
             handsDetected = hands.process(frame).multi_hand_landmarks is not None
