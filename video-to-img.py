@@ -7,7 +7,7 @@ import datetime
 import os
 import matplotlib.pyplot as plt
 
-file_name = "./vid/short-sample2.mp4"
+file_name = "./vid/short-sample4.mp4"
 
 cap = cv2.VideoCapture(file_name)
 
@@ -24,7 +24,7 @@ n = fps / 2
 i = 0
 j = 0
 
-difference_threshold = 2.5
+difference_threshold = 5.0
 prev_compare = "same"
 
 # Create an empty plot
@@ -42,6 +42,11 @@ current_time = datetime.datetime.now().strftime("%Y-%m-%d %H_%M_%S")
 
 if not os.path.exists(current_time):
     os.makedirs(f'./data/{current_time}')
+
+# save the fps, threshold, and file name to a csv file
+with open(f"./data/{current_time}/data.csv", "w") as f:
+    f.write("fps, threshold, file_name\n")
+    f.write(f"{fps}, {difference_threshold}, {file_name}\n")
 
 # display the frames and take every nth frame
 while True:
@@ -103,9 +108,9 @@ while True:
 plt.plot(plot_diff)
 plt.show()
 
-cv2.destroyAllWindows()
+# save the plot to a png file
+plt.savefig(f"./data/{current_time}/plot.png")  
 
-# save the fps, threshold, and file name to a csv file
-with open(f"./data/{current_time}/data.csv", "w") as f:
-    f.write("fps, threshold, file_name\n")
-    f.write(f"{fps}, {difference_threshold}, {current_time}\n")
+cv2.waitKey(0)
+
+cv2.destroyAllWindows()

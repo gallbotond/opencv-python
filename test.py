@@ -1,19 +1,10 @@
 import matplotlib.pyplot as plt
 
-# Create an empty plot
-fig, ax = plt.subplots()
+current_time = 234
+fps = 23
+difference_threshold = 2.5
 
-# Initialize the plot with some data
-x = [0]
-y = [0]
-line, = ax.plot(x, y)
-
-# Update the plot in a for loop
-for i in range(0, 100):
-    x.append(i)
-    y.append(i**2)
-    line.set_data(x, y)
-    ax.relim()
-    # ax.autoscale_view()
-    plt.draw()
-    plt.pause(0.1)
+# save the fps, threshold, and file name to a csv file
+with open(f"./data.csv", "w") as f:
+    f.write("fps, threshold, file_name\n")
+    f.write(f"{fps}, {difference_threshold}, {current_time}\n")
