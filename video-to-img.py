@@ -7,8 +7,9 @@ import datetime
 import os
 import matplotlib.pyplot as plt
 
-cap = cv2.VideoCapture("./vid/short-sample3.mp4")
+file_name = "./vid/short-sample2.mp4"
 
+cap = cv2.VideoCapture(file_name)
 
 # get the fps of the video
 def getFPS(cap):
@@ -23,7 +24,7 @@ n = fps / 2
 i = 0
 j = 0
 
-difference_threshold = 2.0
+difference_threshold = 2.5
 prev_compare = "same"
 
 # Create an empty plot
@@ -87,10 +88,10 @@ while True:
                     and not handsDetected
                 ):
                 # save the current frame to an image file
-                cv2.imwrite(f"./data/{current_time}/frame_{j}_{'%.2f' % mean_diff}.jpg", frame)
+                cv2.imwrite(f"./data/{current_time}/frame_{j}_{'%.2f' % mean_diff1}.jpg", frame)
                 print("saved")
 
-            prev_compare = "same" if mean_diff1 < difference_threshold else "different"
+            prev_compare = "same" if mean_diff1 < difference_threshold and mean_diff2 < difference_threshold else "different"
 
     i += 1
     # wait 1 second for the next frame
@@ -103,3 +104,8 @@ plt.plot(plot_diff)
 plt.show()
 
 cv2.destroyAllWindows()
+
+# save the fps, threshold, and file name to a csv file
+with open(f"./data/{current_time}/data.csv", "w") as f:
+    f.write("fps, threshold, file_name\n")
+    f.write(f"{fps}, {difference_threshold}, {current_time}\n")
