@@ -4,7 +4,7 @@ import rescale as rs
 import time
 import mediapipe as mp
 
-cap = cv2.VideoCapture("./vid/vid.mp4")
+cap = cv2.VideoCapture("./vid/VID_20231010_180634.mp4")
 
 
 # get the fps of the video
