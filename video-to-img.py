@@ -3,9 +3,13 @@ import cv2
 import rescale as rs
 import time
 import mediapipe as mp
+import datetime
+import os
+import matplotlib.pyplot as plt
 
-cap = cv2.VideoCapture("./vid/VID_20231010_180634.mp4")
+file_name = "./vid/short-sample2.mp4"
 
+cap = cv2.VideoCapture(file_name)
 
 # get the fps of the video
 def getFPS(cap):
@@ -23,7 +27,21 @@ j = 0
 difference_threshold = 2.5
 prev_compare = "same"
 
+# Create an empty plot
+fig, ax = plt.subplots()
+
+plot_diff = []
+x = []
+
+line, = ax.plot(x, plot_diff)
+
 hands = mp.solutions.hands.Hands()
+
+# create a new folder with the day, hour and minute as the folder name
+current_time = datetime.datetime.now().strftime("%Y-%m-%d %H_%M_%S")
+
+if not os.path.exists(current_time):
+    os.makedirs(f'./data/{current_time}')
 
 # display the frames and take every nth frame
 while True:
@@ -32,23 +50,48 @@ while True:
     if i % n == 0:
         frames.append(frame)
         j += 1
-        cv2.imshow("frame", rs.rescaleFrame(frame, 0.2))
+        cv2.imshow("frame", rs.rescaleFrame(frame))
 
-        if j > 2:
+        if j > 3:
             img1 = frames[j-1]
             img2 = frames[j-2]
-            diff = cv2.absdiff(img1, img2)
-            cv2.imshow('diff', diff)
-            mean_diff = cv2.mean(diff)[0]
+            img3 = frames[j-3]
+
+            diff1 = cv2.absdiff(img1, img2)
+            diff2 = cv2.absdiff(img2, img3)
+
+            # diff = cv2.bitwise_and(diff1, diff2)
+
+            mean_diff1 = cv2.mean(diff1)[0]
+            mean_diff2 = cv2.mean(diff2)[0]
+            
+            print(mean_diff1, mean_diff2, prev_compare)
+
+            # plot the plot_diff and show it
+            x.append(j)
+            plot_diff.append(mean_diff1)
+            line.set_data(x, plot_diff)
+
+            ax.relim()
+            ax.autoscale_view()
+
+            plt.draw()
+            plt.pause(0.1)
 
             # determine if there are hands on the frame
             handsDetected = hands.process(frame).multi_hand_landmarks is not None
 
-            if mean_diff < difference_threshold and prev_compare == "different" and not handsDetected:
+            if (
+                    mean_diff1 < difference_threshold 
+                    and mean_diff2 < difference_threshold
+                    and prev_compare == "different" 
+                    and not handsDetected
+                ):
                 # save the current frame to an image file
-                cv2.imwrite(f"./curated/frame_{j}_{'%.2f' % mean_diff}.jpg", frame)
+                cv2.imwrite(f"./data/{current_time}/frame_{j}_{'%.2f' % mean_diff1}.jpg", frame)
+                print("saved")
 
-            prev_compare = "same" if mean_diff < difference_threshold else "different"
+            prev_compare = "same" if mean_diff1 < difference_threshold and mean_diff2 < difference_threshold else "different"
 
     i += 1
     # wait 1 second for the next frame
@@ -56,25 +99,13 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
-# # Load the two images
-# img1 = frames[0]
-# img2 = frames[1]
+# plot the mean diff
+plt.plot(plot_diff)
+plt.show()
 
-# # Compute the absolute difference between the two images
-# diff = cv2.absdiff(img1, img2)
-
-# # Display the difference image
-# cv2.imshow('Difference', rs.rescaleFrame(diff, .2))
-
-# # Calculate the mean pixel value of the difference image
-# mean_diff = cv2.mean(diff)[0]
-# print(mean_diff)
-
-# # Determine if the two images are different or not
-# if mean_diff < 2:
-#     print('The two images are identical')
-# else:
-#     print('The two images are different')
-
-# cv2.waitKey(0)
 cv2.destroyAllWindows()
+
+# save the fps, threshold, and file name to a csv file
+with open(f"./data/{current_time}/data.csv", "w") as f:
+    f.write("fps, threshold, file_name\n")
+    f.write(f"{fps}, {difference_threshold}, {current_time}\n")
