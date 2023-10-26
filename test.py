@@ -1,10 +1,17 @@
 import matplotlib.pyplot as plt
 
-current_time = 234
-fps = 23
-difference_threshold = 2.5
+# make a graph of random values and save it 
 
-# save the fps, threshold, and file name to a csv file
-with open(f"./data.csv", "w") as f:
-    f.write("fps, threshold, file_name\n")
-    f.write(f"{fps}, {difference_threshold}, {current_time}\n")
+plot_diff = [2.345522762345679, 2.3852372685185186, 2.8482310956790124, 2.345522762345679, 2.392145061728395, 2.8482310956790124, 2.416911651234568, 2.392145061728395, 2.326138117283951, 2.416911651234568, 2.328784722222222, 2.326138117283951, 2.1514525462962966, 2.328784722222222, 2.366207561728395, 2.1514525462962966, 2.4247222222222224, 2.366207561728395, 2.3085860339506175, 2.4247222222222224, 2.2637635030864196, 2.3085860339506175, 2.2025694444444444, 2.637635030864196, 3.146996527777778, 2.2025694444444444] 
+# Create an empty plot
+fig, ax = plt.subplots()    
+
+# Create a line plot (using Matplotlib) on that plot
+plt.plot(plot_diff)
+plt.draw()
+
+# Save the plot to a file
+plt.savefig('plot.png')
+
+# show the plot
+plt.show()

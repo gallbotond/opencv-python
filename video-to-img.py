@@ -16,10 +16,17 @@ def getFPS(cap):
     fps = cap.get(cv2.CAP_PROP_FPS)
     return fps
 
+# get the frame count of the video
+def getFrameCount(cap):
+    frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+    return frame_count
 
+fpsToCapture = 2
+
+frameCount = getFrameCount(cap)
 frames = []
 fps = getFPS(cap)
-n = fps / 2
+n = fps / fpsToCapture
 
 i = 0
 j = 0
@@ -45,11 +52,11 @@ if not os.path.exists(current_time):
 
 # save the fps, threshold, and file name to a csv file
 with open(f"./data/{current_time}/data.csv", "w") as f:
-    f.write("fps, threshold, file_name\n")
-    f.write(f"{fps}, {difference_threshold}, {file_name}\n")
+    f.write("sample_fps, fps_to_capture,  threshold, file_name\n")
+    f.write(f"{fps}, {fpsToCapture}, {difference_threshold}, {file_name}\n")
 
 # display the frames and take every nth frame
-while True:
+while i < frameCount:
     _, frame = cap.read()
 
     if i % n == 0:
@@ -81,7 +88,7 @@ while True:
             ax.autoscale_view()
 
             plt.draw()
-            plt.pause(0.1)
+            plt.pause(0.001)
 
             # determine if there are hands on the frame
             handsDetected = hands.process(frame).multi_hand_landmarks is not None
@@ -96,6 +103,10 @@ while True:
                 cv2.imwrite(f"./data/{current_time}/frame_{j}_{'%.2f' % mean_diff1}.jpg", frame)
                 print("saved")
 
+                # place a red cross on the plot
+                plt.plot(j, mean_diff1, 'ro')
+                plt.draw()
+
             prev_compare = "same" if mean_diff1 < difference_threshold and mean_diff2 < difference_threshold else "different"
 
     i += 1
@@ -104,13 +115,16 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
+# cv2.waitKey(0)
+
 # plot the mean diff
-plt.plot(plot_diff)
-plt.show()
+# plt.plot(plot_diff)
+# plt.draw()
 
 # save the plot to a png file
+print('saving plot...')
 plt.savefig(f"./data/{current_time}/plot.png")  
 
-cv2.waitKey(0)
+# plt.show()
 
 cv2.destroyAllWindows()
