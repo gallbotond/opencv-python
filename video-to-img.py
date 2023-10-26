@@ -21,7 +21,7 @@ def getFrameCount(cap):
     frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT)
     return frame_count
 
-fpsToCapture = 2
+fpsToCapture = 3
 
 frameCount = getFrameCount(cap)
 frames = []
@@ -31,7 +31,7 @@ n = fps / fpsToCapture
 i = 0
 j = 0
 
-difference_threshold = 5.0
+difference_threshold = 4.0
 prev_compare = "same"
 
 # Create an empty plot
