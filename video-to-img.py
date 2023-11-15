@@ -7,7 +7,7 @@ import datetime
 import os
 import matplotlib.pyplot as plt
 
-file_name = "./vid/short-sample4.mp4"
+file_name = "./vid/short-sample3.mp4"
 
 cap = cv2.VideoCapture(file_name)
 
@@ -21,7 +21,7 @@ def getFrameCount(cap):
     frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT)
     return frame_count
 
-fpsToCapture = 3
+fpsToCapture = 30
 
 frameCount = getFrameCount(cap)
 frames = []
