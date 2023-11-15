@@ -10,6 +10,27 @@ import os
 # define variable for resize tratio
 ratio = 1
 
+def draw_points_between(img, pt1, pt2, nr=1):
+    
+
+def drawpoints(orig, tl, tr, bl, br):
+    # draw points on the tl, tr, br, and bl points respectively
+    cv2.circle(orig, (int(tl[0]), int(tl[1])), 5, (255, 0, 0), -1)
+    cv2.circle(orig, (int(tr[0]), int(tr[1])), 5, (255, 0, 0), -1)
+    cv2.circle(orig, (int(br[0]), int(br[1])), 5, (255, 0, 0), -1)
+    cv2.circle(orig, (int(bl[0]), int(bl[1])), 5, (255, 0, 0), -1)
+
+    # draw a point halfway between tl and tr
+    cv2.circle(orig, (int((tl[0] + tr[0])/2), int((tl[1] + tr[1])/2)), 5, (255, 0, 0), -1)
+
+    # draw a point halfway between bl and br
+    cv2.circle(orig, (int((bl[0] + br[0])/2), int((bl[1] + br[1])/2)), 5, (255, 0, 0), -1)
+
+    # draw 11 points between tr and br
+
+
+    cv2.imshow("Points", orig)
+
 def for_point_warp(cnt, orig):
     # we need to determine
     # the top-left, top-right, bottom-right, and bottom-left
@@ -39,6 +60,7 @@ def for_point_warp(cnt, orig):
 
     # now that we have our rectangle of points, let's compute
     # the width of our new image
+    print(rect)
     (tl, tr, br, bl) = rect
     widthA = np.sqrt(((br[0] - bl[0]) ** 2) + ((br[1] - bl[1]) ** 2))
     widthB = np.sqrt(((tr[0] - tl[0]) ** 2) + ((tr[1] - tl[1]) ** 2))
@@ -46,6 +68,8 @@ def for_point_warp(cnt, orig):
     # ...and now for the height of our new image
     heightA = np.sqrt(((tr[0] - br[0]) ** 2) + ((tr[1] - br[1]) ** 2))
     heightB = np.sqrt(((tl[0] - bl[0]) ** 2) + ((tl[1] - bl[1]) ** 2))
+
+    drawpoints(orig, tl, tr, br, bl)
 
     # take the maximum of the width and height values to reach
     # our final dimensions
@@ -86,7 +110,9 @@ def resize(img, width=None, height=None, interpolation = cv2.INTER_AREA):
         return resized
 
 #load an image
-flat_object = cv2.imread('./Pinetti-Backgammon-Navy_900x900.png')
+flat_object = cv2.imread('./img/1700048702655.jpg')
+# resize the image
+flat_object = resize(flat_object, height=600)
 cv2.imshow('Original image', flat_object)
 cv2.waitKey(0)
 #resize the image
