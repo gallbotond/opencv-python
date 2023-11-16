@@ -1,4 +1,3 @@
-
 from __future__ import division
 import cv2
 import numpy as np
@@ -11,9 +10,24 @@ import os
 ratio = 1
 
 def draw_points_between(img, pt1, pt2, nr=1):
-    
+    points = []
 
-def drawpoints(orig, tl, tr, bl, br):
+    # draw nr points between pt1 and pt2
+    for i in range(1, nr+1):
+        x = int(pt1[0] + (pt2[0] - pt1[0]) * i / (nr+1))
+        y = int(pt1[1] + (pt2[1] - pt1[1]) * i / (nr+1))
+        cv2.circle(img, (x, y), 5, (255, 100, 0), -1)
+
+        # save the points in a list
+        points.append((x, y))
+
+    return points
+
+def draw_line(img, pt1, pt2):
+    for i in range(0, len(pt1)):
+        cv2.line(img, pt1[i], pt2[i], (209, 63, 241), 2)
+
+def draw_points(orig, tl, tr, br, bl):
     # draw points on the tl, tr, br, and bl points respectively
     cv2.circle(orig, (int(tl[0]), int(tl[1])), 5, (255, 0, 0), -1)
     cv2.circle(orig, (int(tr[0]), int(tr[1])), 5, (255, 0, 0), -1)
@@ -21,13 +35,21 @@ def drawpoints(orig, tl, tr, bl, br):
     cv2.circle(orig, (int(bl[0]), int(bl[1])), 5, (255, 0, 0), -1)
 
     # draw a point halfway between tl and tr
-    cv2.circle(orig, (int((tl[0] + tr[0])/2), int((tl[1] + tr[1])/2)), 5, (255, 0, 0), -1)
+    mid_top = draw_points_between(orig, tl, tr)
 
-    # draw a point halfway between bl and br
-    cv2.circle(orig, (int((bl[0] + br[0])/2), int((bl[1] + br[1])/2)), 5, (255, 0, 0), -1)
+    # draw a point halfway between tr and br
+    mid_bottom = draw_points_between(orig, bl, br)
 
-    # draw 11 points between tr and br
+    # draw 11 points between br and tr
+    right = draw_points_between(orig, br, tr, 11)
 
+    # draw 11 points between tl and bl
+    left = draw_points_between(orig, bl, tl, 11)
+
+    # print(mid_bottom[0][0], mid_top)
+    # cv2.line(orig, (int(mid_top[0][0]), int(mid_top[0][1])), (int(mid_bottom[0][0]), int(mid_bottom[0][1])), (197, 134, 171), 2)
+    draw_line(orig, mid_top, mid_bottom)
+    draw_line(orig, right, left)
 
     cv2.imshow("Points", orig)
 
@@ -56,7 +78,8 @@ def for_point_warp(cnt, orig):
     rect[3] = pts[np.argmax(diff)]
     # Notice how our points are now stored in an imposed order: 
     # top-left, top-right, bottom-right, and bottom-left. 
-    # Keeping a consistent order is important when we apply our perspective transformation
+    # Keeping a consistent order is important when we apply our perspective 
+    # transformation
 
     # now that we have our rectangle of points, let's compute
     # the width of our new image
@@ -69,7 +92,7 @@ def for_point_warp(cnt, orig):
     heightA = np.sqrt(((tr[0] - br[0]) ** 2) + ((tr[1] - br[1]) ** 2))
     heightB = np.sqrt(((tl[0] - bl[0]) ** 2) + ((tl[1] - bl[1]) ** 2))
 
-    drawpoints(orig, tl, tr, br, bl)
+    draw_points(orig, tl, tr, br, bl)
 
     # take the maximum of the width and height values to reach
     # our final dimensions
@@ -99,13 +122,13 @@ def resize(img, width=None, height=None, interpolation = cv2.INTER_AREA):
     elif width is None:
         ratio = height/h
         width = int(w*ratio)
-        print(width)
+        # print(width)
         resized = cv2.resize(img, (height, width), interpolation)
         return resized
     else:
         ratio = width/w
         height = int(h*ratio)
-        print(height)
+        # print(height)
         resized = cv2.resize(img, (height, width), interpolation)
         return resized
 
@@ -113,8 +136,8 @@ def resize(img, width=None, height=None, interpolation = cv2.INTER_AREA):
 flat_object = cv2.imread('./img/1700048702655.jpg')
 # resize the image
 flat_object = resize(flat_object, height=600)
-cv2.imshow('Original image', flat_object)
-cv2.waitKey(0)
+# cv2.imshow('Original image', flat_object)
+# cv2.waitKey(0)
 #resize the image
 flat_object_resized = resize(flat_object, height=600)
 #make a copy
@@ -149,7 +172,7 @@ for c in cnts:
     # if our approximated contour has four points, then
     # we can assume that we have found our screen
 
-    print("points", len(approx))
+    # print("points", len(approx))
     if len(approx) == 4:
         our_cnt = approx
         break
@@ -160,7 +183,7 @@ if our_cnt is not None:
 warped = for_point_warp(our_cnt/ratio, flat_object)
 warped = resize(warped, height=800)
 
-cv2.imshow("Original image", flat_object_resized)
+# cv2.imshow("Original image", flat_object_resized)
 cv2.imshow("Marked ROI", flat_object_resized_copy)
 cv2.imshow("Warped ROI", warped)
 
