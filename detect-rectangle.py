@@ -115,7 +115,7 @@ def for_point_warp(cnt, orig):
 
 def resize(img, width=None, height=None, interpolation = cv2.INTER_AREA):
     global ratio
-    w, h, _ = img.shape
+     w, h, _ = img.shape
 
     if width is None and height is None:
         return img
