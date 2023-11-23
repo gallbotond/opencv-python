@@ -133,7 +133,11 @@ def resize(img, width=None, height=None, interpolation = cv2.INTER_AREA):
         return resized
 
 #load an image
-flat_object = cv2.imread('./img/1700048702655.jpg')
+flat_object = cv2.imread('./img/im2.jpeg')
+# check if image is loaded
+if flat_object is None:
+    print("Error loading image")
+    exit(0)
 # resize the image
 flat_object = resize(flat_object, height=600)
 # cv2.imshow('Original image', flat_object)
