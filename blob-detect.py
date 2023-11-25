@@ -64,7 +64,7 @@ final = threshold_slider(im, 'Thresholded Image')
 _, thresholded_image = cv2.threshold(im, final, 255, cv2.THRESH_BINARY)
 
 # erode the thresholded image
-eroded_image = cv2.erode(thresholded_image, None, iterations=5)
+eroded_image = cv2.erode(thresholded_image, None, iterations=10)
 cv2.imshow('Eroded Image', eroded_image)
 cv2.waitKey(0)
 

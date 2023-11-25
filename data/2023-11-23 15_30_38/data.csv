@@ -1,0 +1,2 @@
+sample_fps, fps_to_capture,  threshold, file_name
+10.0, 3, 4.0, ./vid/2023-11-23-15-04-29.mp4
