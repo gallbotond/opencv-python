@@ -64,7 +64,7 @@ final = threshold_slider(im, 'Thresholded Image')
 _, thresholded_image = cv2.threshold(im, final, 255, cv2.THRESH_BINARY)
 
 # erode the thresholded image
-eroded_image = cv2.erode(thresholded_image, None, iterations=5)
+eroded_image = cv2.erode(thresholded_image, None, iterations=10)
 cv2.imshow('Eroded Image', eroded_image)
 cv2.waitKey(0)
 
@@ -74,7 +74,7 @@ blurred_image = cv2.GaussianBlur(eroded_image, (bv, bv), 0)
 cv2.imshow('Blurred Image', blurred_image)
 cv2.waitKey(0)
 
-final = threshold_slider(blurred_image, 'Thresholded Image after blur')
+# final = threshold_slider(blurred_image, 'Thresholded Image after blur')
 _, thresholded_image_after = cv2.threshold(blurred_image, final, 255, cv2.THRESH_BINARY)
 cv2.imshow('Thresholded Image after blur', thresholded_image_after)
 cv2.waitKey(0)
