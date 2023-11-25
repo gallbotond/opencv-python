@@ -1,2 +1,0 @@
-sample_fps, fps_to_capture,  threshold, file_name
-30.0, 30, 4.0, ./vid/vid22.mp4
