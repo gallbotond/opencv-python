@@ -115,7 +115,7 @@ def for_point_warp(cnt, orig):
 
 def resize(img, width=None, height=None, interpolation = cv2.INTER_AREA):
     global ratio
-     w, h, _ = img.shape
+    w, h, _ = img.shape
 
     if width is None and height is None:
         return img
@@ -132,64 +132,72 @@ def resize(img, width=None, height=None, interpolation = cv2.INTER_AREA):
         resized = cv2.resize(img, (height, width), interpolation)
         return resized
 
-#load an image
-flat_object = cv2.imread('./img/im2.jpeg')
-# check if image is loaded
-if flat_object is None:
-    print("Error loading image")
-    exit(0)
-# resize the image
-flat_object = resize(flat_object, height=600)
-# cv2.imshow('Original image', flat_object)
-# cv2.waitKey(0)
-#resize the image
-flat_object_resized = resize(flat_object, height=600)
-#make a copy
-flat_object_resized_copy = flat_object_resized.copy()
-#convert to HSV color scheme
-flat_object_resized_hsv = cv2.cvtColor(flat_object_resized_copy, cv2.COLOR_BGR2HSV)
-# split HSV to three chanels
-hue, saturation, value = cv2.split(flat_object_resized_hsv)
-# threshold to find the contour
-retval, thresholded = cv2.threshold(saturation, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-# morphological operations
-thresholded_open = cv2.morphologyEx(thresholded, cv2.MORPH_OPEN, (7,7))
-thresholded_close = cv2.morphologyEx(thresholded_open, cv2.MORPH_CLOSE, (7,7))
-# find edges
-thresholded_edge = cv2.Canny(thresholded_close, 15, 150)
-# The cv2.findContours method is destructive (meaning it manipulates the image you pass in) 
-# so if you plan on using that image again later, be sure to clone it. 
-cnts = cv2.findContours(thresholded_edge.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
-# keep only 10 the largest ones
-cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:10]
-# the contour that we seek for
-our_cnt = None
-# loop over our 10 largest contours in the query image
-for c in cnts:
-    # approximate the contour
-    # These methods are used to approximate the polygonal curves of a contour. 
-    # In order to approximate a contour, you need to supply your level of approximation precision. 
-    # In this case, we use 2% of the perimeter of the contour. The precision is an important value to consider. 
-    # If you intend on applying this code to your own projects, you’ll likely have to play around with the precision value.
-    peri = cv2.arcLength(c, True)
-    approx = cv2.approxPolyDP(c, 0.02 * peri, True)
-    # if our approximated contour has four points, then
-    # we can assume that we have found our screen
+def detect_rectangle(img):
+    #load an image
+    flat_object = cv2.imread(img)
+    # check if image is loaded
+    if flat_object is None:
+        print("Error loading image")
+        exit(0)
+    # resize the image
+    if flat_object.shape == None: print('no shape')
+    flat_object = resize(flat_object, height=600)
+    # cv2.imshow('Original image', flat_object)
+    # cv2.waitKey(0)
+    #resize the image
+    flat_object_resized = resize(flat_object, height=600)
+    #make a copy
+    flat_object_resized_copy = flat_object_resized.copy()
+    #convert to HSV color scheme
+    flat_object_resized_hsv = cv2.cvtColor(flat_object_resized_copy, cv2.COLOR_BGR2HSV)
+    # split HSV to three chanels
+    hue, saturation, value = cv2.split(flat_object_resized_hsv)
+    # threshold to find the contour
+    retval, thresholded = cv2.threshold(saturation, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+    cv2.imshow('Thresholded image', thresholded)
+    cv2.waitKey(0)
+    # morphological operations
+    thresholded_open = cv2.morphologyEx(thresholded, cv2.MORPH_OPEN, (7,7))
+    thresholded_close = cv2.morphologyEx(thresholded_open, cv2.MORPH_CLOSE, (7,7))
+    # find edges
+    thresholded_edge = cv2.Canny(thresholded_close, 15, 150)
+    # The cv2.findContours method is destructive (meaning it manipulates the image you pass in) 
+    # so if you plan on using that image again later, be sure to clone it. 
+    cnts = cv2.findContours(thresholded_edge.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+    # keep only 10 the largest ones
+    cnts = sorted(cnts, key = cv2.contourArea, reverse = True)[:10]
+    # the contour that we seek for
+    our_cnt = None
+    # loop over our 10 largest contours in the query image
+    for c in cnts:
+        # approximate the contour
+        # These methods are used to approximate the polygonal curves of a contour. 
+        # In order to approximate a contour, you need to supply your level of approximation precision. 
+        # In this case, we use 2% of the perimeter of the contour. The precision is an important value to consider. 
+        # If you intend on applying this code to your own projects, you’ll likely have to play around with the precision value.
+        peri = cv2.arcLength(c, True)
+        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+        # if our approximated contour has four points, then
+        # we can assume that we have found our screen
 
-    # print("points", len(approx))
-    if len(approx) == 4:
-        our_cnt = approx
-        break
+        # print("points", len(approx))
+        if len(approx) == 4:
+            our_cnt = approx
+            break
+        else:
+            print(len(approx))
 
-# draw a contour
-if our_cnt is not None:
-    cv2.drawContours(flat_object_resized_copy, [our_cnt], -1, (0,255,0), 3)
-warped = for_point_warp(our_cnt/ratio, flat_object)
-warped = resize(warped, height=800)
+    # draw a contour
+    if our_cnt is not None:
+        cv2.drawContours(flat_object_resized_copy, [our_cnt], -1, (0,255,0), 3)
+    warped = for_point_warp(our_cnt/ratio, flat_object)
+    warped = resize(warped, height=400)
 
-# cv2.imshow("Original image", flat_object_resized)
-cv2.imshow("Marked ROI", flat_object_resized_copy)
-cv2.imshow("Warped ROI", warped)
+    # cv2.imshow("Original image", flat_object_resized)
+    cv2.imshow("Marked ROI", flat_object_resized_copy)
+    cv2.imshow("Warped ROI", warped)
 
-cv2.waitKey()
-cv2.destroyAllWindows()
+    cv2.waitKey()
+    cv2.destroyAllWindows()
+
+# detect_rectangle('./img/im1.jpeg')
