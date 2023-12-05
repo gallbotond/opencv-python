@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 def display_threshold_window(image):
     # Create a window to display the image
@@ -26,5 +27,22 @@ def display_threshold_window(image):
     # Wait for a key press
     cv2.waitKey(0)
 
-    # Destroy the window
-    cv2.destroyAllWindows()
+    # Get the final threshold value
+    final_threshold = cv2.getTrackbarPos('Threshold', 'Threshold Image')
+    return final_threshold
+
+def custom_div(im1, im2):
+    result = np.zeros((im1.shape[0], im1.shape[1]), dtype='uint8')
+    # iterate over the whole image and subtract im2 from im1
+    for i in range(im1.shape[0]):
+        for j in range(im1.shape[1]):
+            val1 = im1[i][j].astype('int8')
+            val2 = im2[i][j].astype('int8')
+            res = val1 - val2
+            # make sure the value is not negative
+            if res < 0:
+                result[i][j] = 0
+            else:
+                result[i][j] = res
+
+    return result

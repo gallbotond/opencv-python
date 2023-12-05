@@ -1,11 +1,18 @@
 import cv2
 import numpy as np
 
-color_img = cv2.imread('./img/im1.jpeg')
+color_img = cv2.imread('./img/jpeg/im1.jpeg')
+
+# print the size of the image
+print(color_img.shape)
 
 # rescale the image
-rescale = 4
+rescale = 8
 color_img = cv2.resize(color_img, (color_img.shape[1]//rescale, color_img.shape[0]//rescale))
+
+# print the size of the image
+print(color_img.shape)
+cv2.waitKey(0)
 
 # split the image into 3 channels
 b, g, r = cv2.split(color_img)
@@ -17,8 +24,8 @@ result3 = np.zeros((g.shape[0], g.shape[1]), dtype='uint8')
 def custom_div(im1, im2):
     result = np.zeros((im1.shape[0], im1.shape[1]), dtype='uint8')
     # iterate over the whole image and subtract im2 from im1
-    for i in range(g.shape[0]):
-        for j in range(g.shape[1]):
+    for i in range(im1.shape[0]):
+        for j in range(im1.shape[1]):
             val1 = im1[i][j].astype('int8')
             val2 = im2[i][j].astype('int8')
             res = val1 - val2
@@ -68,7 +75,7 @@ eroded_image = cv2.erode(thresholded_image, None, iterations=10)
 cv2.imshow('Eroded Image', eroded_image)
 cv2.waitKey(0)
 
-bv = 15
+bv = 25
 # apply blur to the thresholded image
 blurred_image = cv2.GaussianBlur(eroded_image, (bv, bv), 0)
 cv2.imshow('Blurred Image', blurred_image)
@@ -79,28 +86,15 @@ _, thresholded_image_after = cv2.threshold(blurred_image, final, 255, cv2.THRESH
 cv2.imshow('Thresholded Image after blur', thresholded_image_after)
 cv2.waitKey(0)
 
-# detect circles on the image
+
 gray_image = cv2.cvtColor(thresholded_image_after, cv2.COLOR_BGR2GRAY)
-circles = cv2.HoughCircles(gray_image, cv2.HOUGH_GRADIENT, 1, 20, param1=50, param2=30, minRadius=0, maxRadius=0)
+_, binary_image = cv2.threshold(gray_image, 1, 255, cv2.THRESH_BINARY)
 
-detected_circles = np.uint16(np.around(circles))
+contours, _ = cv2.findContours(binary_image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-if detected_circles is not None:
-    detected_circles = detected_circles[0, :]
-    for (x, y, r) in detected_circles:
-        cv2.circle(color_img, (x, y), r, (0, 255, 0), 3)
-        cv2.circle(color_img, (x, y), 2, (0, 0, 255), 3)
+img_with_contours = cv2.drawContours(color_img, contours, -1, (0, 255, 0), 3)
 
-    cv2.imshow('detected circles', color_img)
-    cv2.waitKey(0)
-
-cv2.destroyAllWindows()
-
-for (x, y, r) in detected_circles[0, :]:
-    cv2.circle(color_img, (x, y), r, (0, 255, 0), 3)
-    cv2.circle(color_img, (x, y), 2, (0, 0, 255), 3)
-
-cv2.imshow('detected circles', color_img)
+cv2.imshow('img_with_contours', img_with_contours)
 cv2.waitKey(0)
 
 cv2.destroyAllWindows()

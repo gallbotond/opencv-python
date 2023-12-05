@@ -200,4 +200,4 @@ def detect_rectangle(img):
     cv2.waitKey()
     cv2.destroyAllWindows()
 
-# detect_rectangle('./img/im1.jpeg')
+detect_rectangle('./img/jpeg/im1.jpeg')
