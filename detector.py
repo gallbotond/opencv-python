@@ -152,15 +152,33 @@ def detect_rectangle(img):
     flat_object_resized_hsv = cv2.cvtColor(flat_object_resized_copy, cv2.COLOR_BGR2HSV)
     # split HSV to three chanels
     hue, saturation, value = cv2.split(flat_object_resized_hsv)
+
+    cv2.imshow("saturation", saturation)
+    cv2.waitKey(0)
+
     # threshold to find the contour
     retval, thresholded = cv2.threshold(saturation, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+
     cv2.imshow('Thresholded image', thresholded)
     cv2.waitKey(0)
+
     # morphological operations
     thresholded_open = cv2.morphologyEx(thresholded, cv2.MORPH_OPEN, (7,7))
+
+    cv2.imshow('Thresholded open', thresholded_open)
+    cv2.waitKey(0)
+
     thresholded_close = cv2.morphologyEx(thresholded_open, cv2.MORPH_CLOSE, (7,7))
+
+    cv2.imshow('Thresholded close', thresholded_close)
+    cv2.waitKey(0)
+
     # find edges
     thresholded_edge = cv2.Canny(thresholded_close, 15, 150)
+
+    cv2.imshow('Thresholded edge', thresholded_edge)
+    cv2.waitKey(0)
+
     # The cv2.findContours method is destructive (meaning it manipulates the image you pass in) 
     # so if you plan on using that image again later, be sure to clone it. 
     cnts = cv2.findContours(thresholded_edge.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
@@ -193,11 +211,11 @@ def detect_rectangle(img):
     warped = for_point_warp(our_cnt/ratio, flat_object)
     warped = resize(warped, height=400)
 
-    # cv2.imshow("Original image", flat_object_resized)
-    cv2.imshow("Marked ROI", flat_object_resized_copy)
-    cv2.imshow("Warped ROI", warped)
+    # # cv2.imshow("Original image", flat_object_resized)
+    # cv2.imshow("Marked ROI", flat_object_resized_copy)
+    # cv2.imshow("Warped ROI", warped)
 
-    cv2.waitKey()
+    # cv2.waitKey()
     cv2.destroyAllWindows()
 
-detect_rectangle('./img/jpeg/im1.jpeg')
+detect_rectangle('./img/jpg/img2.jpg')

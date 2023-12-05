@@ -1,7 +1,7 @@
 import cv2 # OpenCV Library
 
 # Image to detect shapes on below
-image = cv2.imread("./img/im1.jpeg")
+image = cv2.imread("./img/jpeg/im1.jpeg")
 f = .2
 image = cv2.resize(image, None, fx=f, fy=f)
 
