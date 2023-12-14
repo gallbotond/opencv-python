@@ -8,7 +8,7 @@ file2 = "./vid/short-sample4.mp4"
 file3 = "./vid/short-sample3.mp4"
 file4 = "./vid/IMG_8020.mp4"
 
-frames = cv2.VideoCapture(file4)
+frames = cv2.VideoCapture(file3)
 
 frame_rate = util.getFPS(frames)
 number_of_frames = util.getNumberOfFrames(frames)
