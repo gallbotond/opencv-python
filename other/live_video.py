@@ -1,7 +1,7 @@
 import cv2
 
-# cap = cv2.VideoCapture('http://192.168.0.127:4747/video?640x480')
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('http://192.168.0.141:4747/video?640x480')
+# cap = cv2.VideoCapture(0)
 
 cap.set(cv2.CAP_PROP_FPS, 10)
 
