@@ -1,5 +1,15 @@
 import cv2
 import numpy as np
+import time
+import matplotlib.pyplot as plt
+
+def getFPS(cap):
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    return fps
+
+def getNumberOfFrames(cap):
+    frame_count = cap.get(cv2.CAP_PROP_FRAME_COUNT)
+    return frame_count
 
 def display_threshold_window(image):
     # Create a window to display the image
@@ -67,7 +77,6 @@ def blob_detect_center(img, min_size=200, max_size=400, erode_iterations = 3):
         )
         centers.append(center)
     return centers
-
 
 def draw_points_between(img, pt1, pt2, nr=1):
     points = []
@@ -175,6 +184,14 @@ def for_point_warp(cnt, orig):
     warp = cv2.warpPerspective(orig, M, (maxWidth, maxHeight))
     return warp
 
+def plot_live(x, y, line, ax, val):
+    x.append(val)
+    y.append(time.time())
+    line.set_data(x, y)
+    ax.relim()
+    ax.autoscale_view()
+    plt.draw()
+    plt.pause(0.001)
 
 def resize(img, width=None, height=None, interpolation = cv2.INTER_AREA):
     global ratio
@@ -194,7 +211,6 @@ def resize(img, width=None, height=None, interpolation = cv2.INTER_AREA):
         # print(height)
         resized = cv2.resize(img, (height, width), interpolation)
         return resized
-
 
 def detect_rectangle(img):
     #load an image
