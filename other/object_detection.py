@@ -28,7 +28,9 @@ def speech(text):
     playsound("./sounds/output.mp3")
 
 
-video = cv2.VideoCapture('http://192.168.0.127:4747/video?640x480')
+# video = cv2.VideoCapture('http://192.168.0.127:4747/video?640x480')
+video = cv2.VideoCapture(0)
+video.set(cv2.CAP_PROP_FPS, 10)
 labels = []
 
 while True:

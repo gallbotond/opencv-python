@@ -1,2 +1,2 @@
 
-green_centers = util.blob_detect_center(r_minus_g, min_area, max_area, 6)
+red_centers = util.blob_detect_center(g_minus_r, min_area, max_area, 5)
