@@ -8,7 +8,7 @@ file2 = "./vid/short-sample4.mp4"
 file3 = "./vid/short-sample3.mp4"
 file4 = "./vid/IMG_8020.mp4"
 
-frames = cv2.VideoCapture(file3)
+frames = cv2.VideoCapture(file4)
 
 frame_rate = util.getFPS(frames)
 number_of_frames = util.getNumberOfFrames(frames)
@@ -28,7 +28,7 @@ selected_frames = []  # list of selected frames by reduced framerate
 difference_array = []  # array to store difference values
 selected_values = []
 
-image_compare_displacement = 20  # the distance between the compared images by index
+image_compare_displacement = 15  # the distance between the compared images by index
 difference_threshold = 4.0  # pick frames where the difference is less than this
 
 counter = 0  # frame index
@@ -39,7 +39,7 @@ while counter < number_of_frames:
 
     if counter % selected_frame_index == 0:  # append every nth frame
         selected_frames.append(frame)
-        # print("added frame", counter)
+        print("added frame", counter)
 
     # cv2.imshow("selected frame", selected_frames[-1])
 
@@ -48,7 +48,7 @@ while counter < number_of_frames:
         im2 = selected_frames[-1]
 
         diff = cv2.mean(cv2.absdiff(im1, im2))[0]
-        print("difference", format(diff, ".2f")) # format the difference to 2 decimal places
+        # print("difference", format(diff, ".2f")) # format the difference to 2 decimal places
         difference_array.append(diff)
 
         if diff < difference_threshold:
