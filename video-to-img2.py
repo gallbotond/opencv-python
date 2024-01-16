@@ -9,8 +9,12 @@ file1 = "./vid/VID_20230929_200627.mp4"
 file2 = "./vid/short-sample4.mp4"
 file3 = "./vid/short-sample3.mp4"
 file4 = "./vid/IMG_8020.mp4"
+file5 = './vid/2023-11-23 15-02-30.mkv'
+file6 = './vid/2023-11-23 15-04-29.mkv'
+file7 = './vid/2023-11-23 15-47-13.mkv'
+file8 = './vid/2023-11-23 15-48-15.mp4'
 
-frames = cv2.VideoCapture(file4)
+frames = cv2.VideoCapture(file7)
 
 frame_rate = util.getFPS(frames)
 number_of_frames = util.getNumberOfFrames(frames)
@@ -36,7 +40,8 @@ difference_array = []  # array to store difference values
 selected_values = [] # array to store difference values 
 selected_frames_unique = []  # array to store unique frames
 
-image_compare_displacement = 15  # the distance between the compared images by index
+# image_compare_displacement = 15  # the distance between the compared images by index
+image_compare_displacement = 5  # the distance between the compared images by index
 difference_threshold = 4.0  # pick frames where the difference is less than this
 unique_difference_threshold = 8.0  # to save only the unique frames
 

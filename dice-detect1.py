@@ -21,28 +21,29 @@ PIP_AREA_MIN = AREA_FACTOR * 6
 PIP_AREA_MAX = AREA_FACTOR * 45
 
 if HAVE_DISPLAY:
-  def set_factors(user):
-    global BINARIZATION_THRESHOLD, AREA_FACTOR, DIE_AREA_MIN, DIE_AREA_MAX, PIP_AREA_MIN, PIP_AREA_MAX
-    BINARIZATION_THRESHOLD = cv2.getTrackbarPos('THRESH','control')
-    AREA_FACTOR = float(cv2.getTrackbarPos('SIZE','control'))/10.0
-    DIE_AREA_MIN = AREA_FACTOR * cv2.getTrackbarPos('DIE_MIN','control')
-    DIE_AREA_MAX = AREA_FACTOR * cv2.getTrackbarPos('DIE_MAX','control')
-    PIP_AREA_MIN = AREA_FACTOR * cv2.getTrackbarPos('PIP_MIN','control')
-    PIP_AREA_MAX = AREA_FACTOR * cv2.getTrackbarPos('PIP_MAX','control')
-  #img = np.zeros((300,512,3), np.uint8)
-  cv2.namedWindow('control')
-  cv2.createTrackbar('THRESH','control',BINARIZATION_THRESHOLD,255,set_factors)
-  cv2.createTrackbar('SIZE','control',int(AREA_FACTOR*10),50,set_factors)
-  cv2.createTrackbar('DIE_MIN','control',int(DIE_AREA_MIN/AREA_FACTOR),1000,set_factors)
-  cv2.createTrackbar('DIE_MAX','control',int(DIE_AREA_MAX/AREA_FACTOR),2000,set_factors)
-  cv2.createTrackbar('PIP_MIN','control',int(PIP_AREA_MIN/AREA_FACTOR),10,set_factors)
-  cv2.createTrackbar('PIP_MAX','control',int(PIP_AREA_MAX/AREA_FACTOR),100,set_factors)
+    def set_factors(user):
+        global BINARIZATION_THRESHOLD, AREA_FACTOR, DIE_AREA_MIN, DIE_AREA_MAX, PIP_AREA_MIN, PIP_AREA_MAX
+        BINARIZATION_THRESHOLD = cv2.getTrackbarPos('THRESH','control')
+        AREA_FACTOR = float(cv2.getTrackbarPos('SIZE','control'))/10.0
+        DIE_AREA_MIN = AREA_FACTOR * cv2.getTrackbarPos('DIE_MIN','control')
+        DIE_AREA_MAX = AREA_FACTOR * cv2.getTrackbarPos('DIE_MAX','control')
+        PIP_AREA_MIN = AREA_FACTOR * cv2.getTrackbarPos('PIP_MIN','control')
+        PIP_AREA_MAX = AREA_FACTOR * cv2.getTrackbarPos('PIP_MAX','control')
 
-vc = cv2.VideoCapture('http://192.168.0.141:4747/video?640x480')
+#img = np.zeros((300,512,3), np.uint8)
+cv2.namedWindow('control')
+cv2.createTrackbar('THRESH','control',BINARIZATION_THRESHOLD,255,set_factors)
+cv2.createTrackbar('SIZE','control',int(AREA_FACTOR*10),50,set_factors)
+cv2.createTrackbar('DIE_MIN','control',int(DIE_AREA_MIN/AREA_FACTOR),1000,set_factors)
+cv2.createTrackbar('DIE_MAX','control',int(DIE_AREA_MAX/AREA_FACTOR),2000,set_factors)
+cv2.createTrackbar('PIP_MIN','control',int(PIP_AREA_MIN/AREA_FACTOR),10,set_factors)
+cv2.createTrackbar('PIP_MAX','control',int(PIP_AREA_MAX/AREA_FACTOR),100,set_factors)
+
+vc = cv2.VideoCapture('./vid/short-sample2.mp4')
 # vc = cv2.VideoCapture() # prepare webcam for input
 vc.open(0) # open webcam
 if not vc.isOpened():
-  print "Could not open camera."
+  print ("Could not open camera.")
   sys.exit(1)
 else:
   # high resolutions via USB do not work on the raspberry pi
@@ -53,10 +54,11 @@ else:
   # sudo modprobe bcm2835-v4l2
   #vc.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH,720)
   #vc.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT,1280)
-  vc.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH,640)
-  vc.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT,1024)
-  vc.set(cv2.cv.CV_CAP_PROP_FPS,10)
-  vc.set(cv2.cv.CV_CAP_PROP_BRIGHTNESS,0.5)
+#   vc.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH,640)
+#   vc.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT,1024)
+#   vc.set(cv2.cv.CV_CAP_PROP_FPS,10)
+  vc.set(cv2.CAP_PROP_FPS, 10)
+#   vc.set(cv2.cv.CV_CAP_PROP_BRIGHTNESS,0.5)
 
   # tweak record properties for different lighting
   # the semantics of these commands are dependant on opencv version, os and camera driver.
@@ -85,7 +87,7 @@ else:
   while True:
     retval, image = vc.read() # read frame from camera
     if not retval:
-      print "Could not read frame from camera."
+      print ("Could not read frame from camera.")
       sys.exit(1)
     else:
       #pass
@@ -103,6 +105,7 @@ else:
         cv2.imshow('binary', bin)
       contours0, hierarchy = cv2.findContours( bin.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE) # find contours
       #contours0, hierarchy = ([],[])
+      
       contours = [cv2.approxPolyDP(cnt, 2, True) for cnt in contours0] # simplify contours
       #rgbbin = cv2.cvtColor(bin, cv2.COLOR_GRAY2RGB)
       #cv2.drawContours( rgbbin, contours, -1, (64,128,64), 2 )
@@ -132,33 +135,33 @@ else:
 #      return dice
 
       sum = 0
-      for i in range(len(dice)):
+    for i in range(len(dice)):
         dieCnt, pipContours = dice[i]
         sum = sum + len(pipContours)
 
-      if HAVE_DISPLAY:
+    if HAVE_DISPLAY:
         for i in range(len(dice)):
-          dieCnt, pipContours = dice[i]
-          cv2.drawContours( image, [dieCnt], -1, (64,64,128), 2 )
-          cv2.drawContours( image, pipContours, -1, (64,128,64), 2 )
-          cv2.putText(image, "%d"%len(pipContours), (dieCnt[0][0][0],dieCnt[0][0][1]), cv2.FONT_HERSHEY_PLAIN, 2.0, (255, 64, 64), 2)
-        cv2.putText(image, "%d"%sum, (10,50), cv2.FONT_HERSHEY_PLAIN, 3.0, (255, 255, 255), 2)
+            dieCnt, pipContours = dice[i]
+            cv2.drawContours( image, [dieCnt], -1, (64,64,128), 2 )
+            cv2.drawContours( image, pipContours, -1, (64,128,64), 2 )
+            cv2.putText(image, "%d"%len(pipContours), (dieCnt[0][0][0],dieCnt[0][0][1]), cv2.FONT_HERSHEY_PLAIN, 2.0, (255, 64, 64), 2)
+        cv2.putText(image, "%d"%(sum if sum is not None else 0), (10,50), cv2.FONT_HERSHEY_PLAIN, 3.0, (255, 255, 255), 2)
         cv2.imshow('Die and Pips', image)
 
-      print ("%s ")%(("%d"%sum).rjust(3))
-      sys.stdout.flush()
+    print ("%s " % ("%d" % (sum if sum is not None else 0)).rjust(3))
+    sys.stdout.flush()
 
       #small = cv2.resize(image, None, fx=0.5, fy=0.5, cv2.INTER_NEAREST ) 
       
-      if HAVE_DISPLAY:
+    if HAVE_DISPLAY:
         ch = cv2.waitKey(5)
         if ch > -1:
-          sys.stderr.write("Got key %d.\n"%(ch))
+            sys.stderr.write("Got key %d.\n"%(ch))
         if ch == 115: # save images on s
-          cv2.imwrite('bin.png',bin)
-          cv2.imwrite('marked.png',image)
-          sys.stderr.write("Wrote images to files.\n")
+            cv2.imwrite('bin.png',bin)
+            cv2.imwrite('marked.png',image)
+            sys.stderr.write("Wrote images to files.\n")
         #writer.write(image)
         if ch == 27: # exit on Esc
-          print ""
-          break
+            print ("")
+            break
