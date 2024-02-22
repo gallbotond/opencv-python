@@ -2,10 +2,10 @@ import cv2
 
 address = 'http://192.168.0.185:4747/video?640x480'
 
-cap = cv2.VideoCapture(address)
-# cap = cv2.VideoCapture(0)
+# cap = cv2.VideoCapture(address)
+cap = cv2.VideoCapture(1)
 
-cap.set(cv2.CAP_PROP_FPS, 10)
+# cap.set(cv2.CAP_PROP_FPS, 10)
 
 while(True):
     _, frame = cap.read()

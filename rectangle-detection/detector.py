@@ -176,8 +176,8 @@ def detect_rectangle(img):
     # find edges
     thresholded_edge = cv2.Canny(thresholded_close, 15, 150)
 
-    # cv2.imshow('Thresholded edge', thresholded_edge)
-    # cv2.waitKey(0)
+    cv2.imshow('Thresholded edge', thresholded_edge)
+    cv2.waitKey(0)
 
     # The cv2.findContours method is destructive (meaning it manipulates the image you pass in) 
     # so if you plan on using that image again later, be sure to clone it. 
@@ -194,7 +194,7 @@ def detect_rectangle(img):
         # In this case, we use 2% of the perimeter of the contour. The precision is an important value to consider. 
         # If you intend on applying this code to your own projects, you’ll likely have to play around with the precision value.
         peri = cv2.arcLength(c, True)
-        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
+        approx = cv2.approxPolyDP(c, 0.005 * peri, True)
         # if our approximated contour has four points, then
         # we can assume that we have found our screen
 
@@ -219,4 +219,4 @@ def detect_rectangle(img):
     # cv2.waitKey()
     cv2.destroyAllWindows()
 
-print(detect_rectangle('./img/jpeg/im1.jpeg'))
+print(detect_rectangle('./img/png/square1.png'))
