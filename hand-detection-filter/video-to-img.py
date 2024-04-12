@@ -1,6 +1,5 @@
 # read a video file and convert it to frames
 import cv2
-import rescale as rs
 import time
 import mediapipe as mp
 import datetime
@@ -10,6 +9,13 @@ import matplotlib.pyplot as plt
 file_name = "./vid/vid22.mp4"
 
 cap = cv2.VideoCapture(file_name)
+
+def rescale(frame, scale=0.5):
+    width = int(frame.shape[1] * scale)
+    height = int(frame.shape[0] * scale)
+    dimensions = (width, height)
+
+    return cv2.resize(frame, dimensions, interpolation=cv2.INTER_AREA)
 
 # get the fps of the video
 def getFPS(cap):
@@ -36,10 +42,8 @@ prev_compare = "same"
 
 # Create an empty plot
 fig, ax = plt.subplots()
-
 plot_diff = []
 x = []
-
 line, = ax.plot(x, plot_diff)
 
 hands = mp.solutions.hands.Hands()

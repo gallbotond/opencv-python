@@ -6,13 +6,15 @@ from collections import deque
 min_threshold = 10                      # these values are used to filter our detector.
 max_threshold = 200                     # they can be tweaked depending on the camera distance, camera angle, ...
 min_area = 10                           # ... focus, brightness, etc.
-min_circularity = 0.3
+min_circularity = 0.1
 min_inertia_ratio = 0.5
+
+# reset the camera parameters (exposure etc.)
 
 address = 'http://192.168.0.185:4747/video?640x480'
  
-cap = cv2.VideoCapture(address)               # '0' is the webcam's ID. usually it's 0/1/2/3/etc. 'cap' is the video object.
-cap.set(15, -4)                         # '15' references video's exposure. '-4' sets it.
+cap = cv2.VideoCapture(0)               # '0' is the webcam's ID. usually it's 0/1/2/3/etc. 'cap' is the video object.
+# cap.set(15, -4)                         # '15' references video's exposure. '-4' sets it.
 # cap.set(cv2.CAP_PROP_FPS, 10)           # set FPS to 10. Don't work
  
 '''

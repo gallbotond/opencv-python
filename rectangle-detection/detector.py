@@ -194,7 +194,7 @@ def detect_rectangle(img):
         # In this case, we use 2% of the perimeter of the contour. The precision is an important value to consider. 
         # If you intend on applying this code to your own projects, you’ll likely have to play around with the precision value.
         peri = cv2.arcLength(c, True)
-        approx = cv2.approxPolyDP(c, 0.005 * peri, True)
+        approx = cv2.approxPolyDP(c, 0.02 * peri, True)
         # if our approximated contour has four points, then
         # we can assume that we have found our screen
 
@@ -209,14 +209,16 @@ def detect_rectangle(img):
     if our_cnt is not None:
         cv2.drawContours(flat_object_resized_copy, [our_cnt], -1, (0,255,0), 3)
         return our_cnt
-    # warped = for_point_warp(our_cnt/ratio, flat_object)
-    # warped = resize(warped, height=400)
+    warped = for_point_warp(our_cnt/ratio, flat_object)
+    warped = resize(warped, height=400)
 
-    # # cv2.imshow("Original image", flat_object_resized)
-    # cv2.imshow("Marked ROI", flat_object_resized_copy)
-    # cv2.imshow("Warped ROI", warped)
+    cv2.imshow("Original image", flat_object_resized)
+    cv2.imshow("Marked ROI", flat_object_resized_copy)
+    cv2.imshow("Warped ROI", warped)
 
-    # cv2.waitKey()
+    print('here')
+
+    cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-print(detect_rectangle('./img/png/square1.png'))
+print(detect_rectangle('./img/test980028.jpg'))
